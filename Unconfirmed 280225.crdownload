@@ -1,0 +1,128 @@
+from turtle import position
+from xml.etree.ElementTree import ElementTree
+
+
+class hashTable:
+    def __init__(self):
+        self.size = int(input("Enter the size: "))
+        self.table = list(0 for i in range(self.size))
+        
+        self.elementCount = 0
+        self.comparisons = 0
+        
+        
+    def isFull(self):
+        if self.elementCount == self.size:
+            return True
+        else:
+            return False
+        
+    def hashfunction(self, element):
+        return element % self.size
+    
+    def quadraticProbing(self, element,position):
+        posFound = False
+        limit = 50
+        i = 1
+        
+        while i <= limit:
+            newPosition = position(i**2)
+            newPosition = newPosition % self.size
+            
+            if self.table[newPosition] == 0:
+                posFound = True
+                break
+            
+            else:
+                i += 1
+        return posFound, newPosition
+            
+    def insert(self, element):
+        if self.isFull():
+            print("Hash Table Full")
+            return False
+        isSorted = False
+        
+        position = self.hashfunction(element)
+        
+        if self.table[position] == 0:
+            self.table[position] = element
+            print("Element " + str(element) + " at positon " + str(position))
+            
+            isSorted = True
+            self.elementCount += 1
+            
+        else:
+            print("Collision has occured for element " + str(element) + " at position " + str(position) + " finding new posiiton") 
+            
+            isSorted, position = self.quadraticProbing(element, position)
+            
+            if isSorted:
+                self.table[position] = element
+                self.elementCount += 1
+                return isSorted
+            
+    def search(self, element):
+        found = False
+        
+        position = self.hashfunction(element)
+        self.comparisons += 1
+        if(self.table[position] == element):
+            return position
+        
+        else:
+            limit = 50
+            i = 1
+            newPosition = position
+            while i <= limit:
+                newPosition = newPosition % self.size
+                self.comparisons += 1
+                
+                if self.table[newPosition] == element:
+                    found = True
+                    break
+                
+                elif self.table[newPosition] == 0:
+                    found = False
+                    break
+                
+                else:
+                    i += 1
+                    print("Element is not present in the hash table")
+                return
+            
+    def display(self):
+        print("\n")
+        for i in range(self.size):
+            print(str(i) + " = " + str(self.table[i]))
+            
+        print("The number of element is the tabke are: "+ str(self.elementCount))
+        
+        
+table1 = hashTable()
+key = int(input("Enter key : "))
+table1.insert(key)
+table1.insert(26)
+table1.insert(31)
+table1.insert(17)
+table1.insert(90)
+table1.insert(28)
+table1.insert(40)
+
+
+table1.display(0)
+print()
+print("The position of element 31 is: " + str(table1.search(31)))
+
+print("The position of element 28 is: " + str(table1.search(28)))
+
+print("The position of element 90 is: " + str(table1.search(90)))        
+      
+print("\n Total number of comparisons done for searching: " + str(table1.comparisons))
+  
+print()        
+
+table1.remove(90)
+table1.remove(90)
+
+table1.display()
